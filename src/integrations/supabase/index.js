@@ -19,38 +19,9 @@ const fromSupabase = async (query) => {
 
 // supabase integration types
 
-// Types based on openapi.json
-
 // Event type
-export type Event = {
-    id: number;
-    created_at: string;
-    name: string;
-    date: string;
-    description: string;
-    venue_id: number;
-    venue?: Venue; // relation to Venue
-};
-
 // Comment type
-export type Comment = {
-    id: number;
-    created_at: string;
-    content: string;
-    event_id: number;
-    event?: Event; // relation to Event
-};
-
 // Venue type
-export type Venue = {
-    id: number;
-    name: string;
-    location: string;
-    description: string;
-    created_at: string;
-    updated_at: string;
-    events?: Event[]; // relation to Events
-};
 
 // hooks
 
