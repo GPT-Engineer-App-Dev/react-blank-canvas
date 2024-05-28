@@ -17,35 +17,89 @@ const fromSupabase = async (query) => {
     return data;
 };
 
-/* supabase integration types
+// supabase integration types
 
-// EXAMPLE TYPES SECTION
+// Types based on openapi.json
 
-Foo // table: foos
-    id: number
-    title: string
-    bars?: Bar[] // available if .select('*,bars(*)') was done
+// Event type
+export type Event = {
+    id: number;
+    created_at: string;
+    name: string;
+    date: string;
+    description: string;
+    venue_id: number;
+    venue?: Venue; // relation to Venue
+};
 
-Bar // table: bars
-    id: number
-    foo_id: number // foreign key to Foo
-	
-*/
+// Comment type
+export type Comment = {
+    id: number;
+    created_at: string;
+    content: string;
+    event_id: number;
+    event?: Event; // relation to Event
+};
+
+// Venue type
+export type Venue = {
+    id: number;
+    name: string;
+    location: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+    events?: Event[]; // relation to Events
+};
 
 // hooks
 
-// EXAMPLE HOOKS SECTION
+// Hooks based on new types
 
-export const useFoo = ()=> useQuery({
-    queryKey: ['foo'],
-    queryFn: fromSupabase(supabase.from('foo').select('*,bars(*)')),
-})
-export const useAddFoo = () => {
+// Events hooks
+export const useEvents = () => useQuery({
+    queryKey: ['events'],
+    queryFn: () => fromSupabase(supabase.from('events').select('*,venue(*)')),
+});
+
+export const useAddEvent = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newFoo)=> fromSupabase(supabase.from('foo').insert([{ title: newFoo.title }])),
-        onSuccess: ()=> {
-            queryClient.invalidateQueries('foo');
+        mutationFn: (newEvent) => fromSupabase(supabase.from('events').insert([newEvent])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('events');
+        },
+    });
+};
+
+// Comments hooks
+export const useComments = () => useQuery({
+    queryKey: ['comments'],
+    queryFn: () => fromSupabase(supabase.from('comments').select('*,event(*)')),
+});
+
+export const useAddComment = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newComment) => fromSupabase(supabase.from('comments').insert([newComment])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('comments');
+        },
+    });
+};
+
+// Venues hooks
+export const useVenues = () => useQuery({
+    queryKey: ['venues'],
+    queryFn: () => fromSupabase(supabase.from('venues').select('*,events(*)')),
+});
+
+export const useAddVenue = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newVenue) => fromSupabase(supabase.from('venues').insert([newVenue])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('venues');
         },
     });
 };
